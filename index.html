@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>9th Sittingbourne (Tunstall and Wormshill) Scout Group - Bulk Order Form</title>
+<style>
+  :root { --navy:#1b3a6b; --purple:#7413dc; --grey:#666; --border:#d5d9e0; }
+  * { box-sizing: border-box; }
+  body { font-family: Arial, Helvetica, sans-serif; max-width: 950px; margin: 0 auto; padding: 24px; color: #222; background: #fff; }
+  header { display:flex; justify-content:space-between; align-items:flex-start; border-bottom:4px solid var(--purple); padding-bottom:12px; margin-bottom:20px; }
+  header h1 { color:var(--navy); font-size:24px; margin:0 0 4px 0; }
+  header p { margin:0; color:var(--grey); font-size:14px; }
+  .scouts-logo { color:var(--purple); font-weight:bold; font-size:20px; text-align:right; }
+  .scouts-logo span { display:block; font-size:12px; color:var(--grey); font-weight:normal; }
+  section { margin-bottom:26px; }
+  h2 { font-size:16px; color:var(--navy); border-left:4px solid var(--purple); padding-left:8px; margin-bottom:12px; }
+  .customer-grid { display:grid; grid-template-columns:repeat(2,1fr); gap:12px 24px; }
+  .field label { display:block; font-size:12px; font-weight:bold; color:var(--grey); margin-bottom:4px; }
+  .field input { width:100%; padding:8px; border:1px solid var(--border); border-radius:4px; font-size:14px; font-family:inherit; }
+  table { width:100%; border-collapse:collapse; font-size:13px; }
+  th { background:var(--navy); color:#fff; text-align:left; padding:8px 6px; font-size:12px; }
+  td { padding:6px; border-bottom:1px solid var(--border); vertical-align:middle; }
+  select, input[type="text"], input[type="number"] { width:100%; padding:6px; border:1px solid var(--border); border-radius:4px; font-size:13px; font-family:inherit; }
+  input[type="number"] { text-align:center; }
+  .unit-price, .line-total { text-align:right; white-space:nowrap; font-variant-numeric:tabular-nums; }
+  .remove-btn { background:#c0392b; color:#fff; border:none; border-radius:4px; padding:6px 10px; cursor:pointer; font-size:12px; }
+  .toolbar { display:flex; gap:10px; margin-top:12px; }
+  button.add-btn, button.print-btn { background:var(--purple); color:#fff; border:none; border-radius:4px; padding:9px 16px; font-size:13px; font-weight:bold; cursor:pointer; }
+  button.print-btn { background:var(--navy); }
+  .totals { margin-top:14px; display:flex; justify-content:flex-end; }
+  .totals table { width:260px; }
+  .totals td { padding:6px 4px; border:none; }
+  .totals .grand-total { font-size:16px; font-weight:bold; color:var(--navy); border-top:2px solid var(--navy); }
+  .price-list { display:grid; grid-template-columns:repeat(3,1fr); gap:16px; font-size:12.5px; }
+  .price-list h3 { font-size:13px; margin:0 0 6px 0; color:var(--navy); }
+  .price-list ul { margin:0; padding-left:18px; }
+  footer { border-top:1px solid var(--border); padding-top:14px; font-size:12px; color:var(--grey); }
+  .note { font-size:12px; color:var(--grey); margin-top:6px; }
+  @media print { .no-print { display:none !important; } body { padding:0; } }
+</style>
+</head>
+<body>
+
+<header>
+  <div>
+    <h1>Bulk Order Form</h1>
+    <p>9th Sittingbourne (Tunstall and Wormshill) Scout Group &middot; Scoutprintdirect</p>
+  </div>
+  <div class="scouts-logo">Scouts
+    <span>9th Sittingbourne (Tunstall and Wormshill)</span>
+  </div>
+</header>
+
+<section>
+  <h2>Your Details</h2>
+  <div class="customer-grid">
+    <div class="field"><label for="group-name">Group</label><input type="text" id="group-name" value="9th Sittingbourne (Tunstall and Wormshill) Scout Group"></div>
+    <div class="field"><label for="cust-name">Contact Name</label><input type="text" id="cust-name" placeholder="Full name"></div>
+    <div class="field"><label for="cust-phone">Contact Number</label><input type="text" id="cust-phone" placeholder="Phone number"></div>
+    <div class="field"><label for="cust-email">Email Address</label><input type="text" id="cust-email" placeholder="Email address"></div>
+  </div>
+</section>
+
+<section>
+  <h2>Order Items</h2>
+  <table id="order-table">
+    <thead>
+      <tr>
+        <th style="width:22%">Item</th>
+        <th style="width:13%">Size</th>
+        <th style="width:21%">Name to Print (optional)</th>
+        <th style="width:9%">Qty</th>
+        <th style="width:12%">Unit Price</th>
+        <th style="width:12%">Line Total</th>
+        <th style="width:6%" class="no-print"></th>
+      </tr>
+    </thead>
+    <tbody id="order-body"></tbody>
+  </table>
+
+  <div class="toolbar no-print">
+    <button class="add-btn" onclick="addRow()">+ Add Item</button>
+    <button class="print-btn" onclick="window.print()">Print / Save as PDF</button>
+    <button class="add-btn" onclick="sendOrder()">Send Order</button>
+  </div>
+
+  <p class="note">Leave "Name to Print" blank for a plain item with no name added. Adult items with a name have it printed front and rear; youth items front only. 4XL and 5XL add £1.50 per item. Prices update automatically.</p>
+
+  <div class="totals">
+    <table>
+      <tr><td>Number of Items:</td><td id="total-qty" style="text-align:right">0</td></tr>
+      <tr class="grand-total"><td>Grand Total:</td><td id="grand-total" style="text-align:right">£0.00</td></tr>
+    </table>
+  </div>
+</section>
+
+<section>
+  <h2>Price List</h2>
+  <div class="price-list">
+    <div>
+      <h3>T-Shirts</h3>
+      <ul>
+        <li>Adult (no name) &ndash; £11</li>
+        <li>Adult (name front &amp; rear) &ndash; £16</li>
+        <li>Youth (no name) &ndash; £10</li>
+        <li>Youth (name added) &ndash; £12</li>
+      </ul>
+    </div>
+    <div>
+      <h3>Polo Shirts</h3>
+      <ul>
+        <li>Adult (no name) &ndash; £13</li>
+        <li>Adult (name front &amp; rear) &ndash; £18</li>
+        <li>Youth (no name) &ndash; £12</li>
+        <li>Youth (name front) &ndash; £14</li>
+      </ul>
+    </div>
+    <div>
+      <h3>Hoodies</h3>
+      <ul>
+        <li>Adult (no name) &ndash; £22</li>
+        <li>Adult (name front &amp; rear) &ndash; £25</li>
+        <li>Youth (no name) &ndash; £20</li>
+        <li>Youth (name added) &ndash; £22</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <p><strong>How to order:</strong> Complete this form, then either save it as a PDF (Print / Save as PDF) and email it as an attachment, or press the "Send Order" button to send it straight from your own email. Once we've received and checked your order, we'll be in contact with payment details and a payment link.</p>
+</footer>
+
+<script>
+const ADULT = ["Small","Medium","Large","XL","2XL","3XL","4XL (+£1.50)","5XL (+£1.50)"];
+const YOUTH = ["3-4 Years","5-6 Years","7-8 Years","9-11 Years","12-13 Years","14-15 Years"];
+const YOUTH_HOOD = ["1-2 Years"].concat(YOUTH.slice(0,5), ["12-13 Years"]).filter((v,i,a)=>a.indexOf(v)===i);
+const ITEMS = {
+  "Adult T-Shirt":  { noName: 11, withName: 16, sizes: ADULT },
+  "Youth T-Shirt":  { noName: 10, withName: 12, sizes: YOUTH },
+  "Adult Polo Shirt": { noName: 13, withName: 18, sizes: ADULT },
+  "Youth Polo Shirt": { noName: 12, withName: 14, sizes: YOUTH },
+  "Adult Hoodie":   { noName: 22, withName: 25, sizes: ADULT },
+  "Youth Hoodie":   { noName: 20, withName: 22, sizes: YOUTH_HOOD }
+};
+const SURCHARGE = 1.5;
+function sizeOptions(item) {
+  return '<option value="">Select</option>' + ITEMS[item].sizes.map(s => `<option>${s}</option>`).join("");
+}
+
+let rowCount = 0;
+
+function itemOptions() {
+  return Object.keys(ITEMS).map(n => `<option value="${n}">${n}</option>`).join("");
+}
+
+function addRow() {
+  const id = ++rowCount;
+  const tr = document.createElement("tr");
+  tr.id = "row-" + id;
+  const first = Object.keys(ITEMS)[0];
+  tr.innerHTML = `
+    <td><select id="item-${id}" onchange="onItemChange(${id})">${itemOptions()}</select></td>
+    <td><select id="size-${id}" onchange="recalcRow(${id})">${sizeOptions(first)}</select></td>
+    <td><input type="text" id="name-${id}" placeholder="Leave blank for none" oninput="recalcRow(${id})"></td>
+    <td><input type="number" id="qty-${id}" min="1" value="1" oninput="recalcRow(${id})"></td>
+    <td class="unit-price" id="unit-${id}">£0.00</td>
+    <td class="line-total" id="line-${id}">£0.00</td>
+    <td class="no-print"><button class="remove-btn" onclick="removeRow(${id})">Remove</button></td>`;
+  document.getElementById("order-body").appendChild(tr);
+  recalcRow(id);
+}
+
+function onItemChange(id) {
+  const item = document.getElementById("item-" + id).value;
+  document.getElementById("size-" + id).innerHTML = sizeOptions(item);
+  recalcRow(id);
+}
+
+function recalcRow(id) {
+  const p = ITEMS[document.getElementById("item-" + id).value];
+  const named = document.getElementById("name-" + id).value.trim() !== "";
+  const qty = parseInt(document.getElementById("qty-" + id).value, 10) || 0;
+  const size = document.getElementById("size-" + id).value;
+  const unit = (named ? p.withName : p.noName) + (/^[45]XL/.test(size) ? SURCHARGE : 0);
+  document.getElementById("unit-" + id).textContent = "£" + unit.toFixed(2);
+  document.getElementById("line-" + id).textContent = "£" + (unit * qty).toFixed(2);
+  recalcTotals();
+}
+
+function removeRow(id) {
+  const row = document.getElementById("row-" + id);
+  if (row) row.remove();
+  recalcTotals();
+}
+
+function recalcTotals() {
+  let qtyTotal = 0, grand = 0;
+  document.querySelectorAll("#order-body tr").forEach(tr => {
+    const id = tr.id.split("-")[1];
+    qtyTotal += parseInt(document.getElementById("qty-" + id).value, 10) || 0;
+    grand += parseFloat(document.getElementById("line-" + id).textContent.replace("£", "")) || 0;
+  });
+  document.getElementById("total-qty").textContent = qtyTotal;
+  document.getElementById("grand-total").textContent = "£" + grand.toFixed(2);
+}
+
+function sendOrder() {
+  const contact = document.getElementById("cust-name").value.trim();
+  if (!contact) { alert("Please enter a contact name before sending."); return; }
+  const lines = [];
+  document.querySelectorAll("#order-body tr").forEach(tr => {
+    const id = tr.id.split("-")[1];
+    const qty = parseInt(document.getElementById("qty-" + id).value, 10) || 0;
+    const size = document.getElementById("size-" + id).value;
+    if (!qty) return;
+    if (!size) { lines.push("MISSING SIZE - " + document.getElementById("item-" + id).value); return; }
+    const name = document.getElementById("name-" + id).value.trim();
+    lines.push(qty + " x " + document.getElementById("item-" + id).value + " | Size: " + size +
+      " | Name: " + (name || "none") + " | " + document.getElementById("line-" + id).textContent);
+  });
+  if (!lines.length) { alert("Please add at least one item."); return; }
+  if (lines.some(l => l.startsWith("MISSING SIZE"))) { alert("Please choose a size for every item."); return; }
+  const body = "BULK ORDER\n" +
+    "Group: " + document.getElementById("group-name").value + "\n" +
+    "Contact: " + contact + "\n" +
+    "Phone: " + document.getElementById("cust-phone").value + "\n" +
+    "Email: " + document.getElementById("cust-email").value + "\n\n" +
+    lines.join("\n") + "\n\n" +
+    "Total items: " + document.getElementById("total-qty").textContent + "\n" +
+    "Grand total: " + document.getElementById("grand-total").textContent;
+  window.location.href = "mailto:Scoutprintdirect@outlook.com?subject=" +
+    encodeURIComponent("Bulk Order - " + document.getElementById("group-name").value) +
+    "&body=" + encodeURIComponent(body);
+}
+
+addRow(); addRow(); addRow();
+</script>
+</body>
+</html>

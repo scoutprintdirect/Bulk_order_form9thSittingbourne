@@ -222,6 +222,20 @@ function sendOrder() {
   });
   if (!lines.length) { alert("Please add at least one item."); return; }
   if (lines.some(l => l.startsWith("MISSING SIZE"))) { alert("Please choose a size for every item."); return; }
+  const keys = Object.keys(ITEMS);
+  const params = new URLSearchParams();
+  params.set("c", contact);
+  params.set("p", document.getElementById("cust-phone").value);
+  params.set("e", document.getElementById("cust-email").value);
+  document.querySelectorAll("#order-body tr").forEach(tr => {
+    const id = tr.id.split("-")[1];
+    const qty = parseInt(document.getElementById("qty-" + id).value, 10) || 0;
+    if (!qty) return;
+    const item = document.getElementById("item-" + id).value;
+    const si = ITEMS[item].sizes.indexOf(document.getElementById("size-" + id).value);
+    params.append("r", [keys.indexOf(item), si, document.getElementById("name-" + id).value.trim(), qty].join("~"));
+  });
+  const link = location.origin + location.pathname + "?" + params.toString();
   const body = "BULK ORDER\n" +
     "Group: " + document.getElementById("group-name").value + "\n" +
     "Contact: " + contact + "\n" +
@@ -229,13 +243,44 @@ function sendOrder() {
     "Email: " + document.getElementById("cust-email").value + "\n\n" +
     lines.join("\n") + "\n\n" +
     "Total items: " + document.getElementById("total-qty").textContent + "\n" +
-    "Grand total: " + document.getElementById("grand-total").textContent;
+    "Grand total: " + document.getElementById("grand-total").textContent + "\n\n" +
+    "Open this link to view the order as a form (then Print / Save as PDF):\n" + link;
   window.location.href = "mailto:Scoutprintdirect@outlook.com?subject=" +
     encodeURIComponent("Bulk Order - " + document.getElementById("group-name").value) +
     "&body=" + encodeURIComponent(body);
 }
 
-addRow(); addRow(); addRow();
+function loadOrderFromLink() {
+  const q = new URLSearchParams(location.search);
+  const rs = q.getAll("r");
+  if (!rs.length) return false;
+  document.getElementById("cust-name").value = q.get("c") || "";
+  document.getElementById("cust-phone").value = q.get("p") || "";
+  document.getElementById("cust-email").value = q.get("e") || "";
+  const keys = Object.keys(ITEMS);
+  rs.forEach(r => {
+    const parts = r.split("~");
+    const item = keys[parseInt(parts[0], 10)];
+    if (!item) return;
+    addRow();
+    const id = rowCount;
+    document.getElementById("item-" + id).value = item;
+    onItemChange(id);
+    const size = ITEMS[item].sizes[parseInt(parts[1], 10)];
+    if (size) document.getElementById("size-" + id).value = size;
+    document.getElementById("name-" + id).value = parts.slice(2, -1).join("~");
+    document.getElementById("qty-" + id).value = parts[parts.length - 1];
+    recalcRow(id);
+  });
+  const note = document.createElement("p");
+  note.className = "note no-print";
+  note.style.cssText = "background:#f3ebff;padding:8px;border-radius:4px;font-size:13px;color:#1b3a6b";
+  note.textContent = "Order loaded from link. Click Print / Save as PDF to keep a copy.";
+  document.querySelector("header").after(note);
+  return true;
+}
+
+if (!loadOrderFromLink()) { addRow(); addRow(); addRow(); }
 </script>
 </body>
 </html>
